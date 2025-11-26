@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C2 Vocabulary Trainer</title>
+    <style>
+        :root {
+            --color-background: #fcfcf9;
+            --color-surface: #fffffd;
+            --color-text: #13343b;
+            --color-text-secondary: #626c71;
+            --color-primary: #21808d;
+            --color-primary-hover: #1d7480;
+            --color-primary-active: #1a6873;
+            --color-secondary: rgba(94, 82, 64, 0.12);
+            --color-secondary-hover: rgba(94, 82, 64, 0.2);
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-card-border: rgba(94, 82, 64, 0.12);
+            --color-success: #21808d;
+            --color-error: #c0152f;
+            --color-bg-1: rgba(59, 130, 246, 0.08);
+            --color-bg-2: rgba(245, 158, 11, 0.08);
+            --color-bg-3: rgba(34, 197, 94, 0.08);
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-24: 24px;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-background: #1f2121;
+                --color-surface: #262828;
+                --color-text: #f5f5f5;
+                --color-text-secondary: rgba(167, 169, 169, 0.7);
+                --color-primary: #32b8c6;
+                --color-primary-hover: #2da6b2;
+                --color-primary-active: #2996a1;
+                --color-secondary: rgba(119, 124, 124, 0.15);
+                --color-secondary-hover: rgba(119, 124, 124, 0.25);
+                --color-border: rgba(119, 124, 124, 0.3);
+                --color-card-border: rgba(119, 124, 124, 0.2);
+                --color-bg-1: rgba(29, 78, 216, 0.15);
+                --color-bg-2: rgba(180, 83, 9, 0.15);
+                --color-bg-3: rgba(21, 128, 61, 0.15);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-background);
+            color: var(--color-text);
+            font-size: var(--font-size-base);
+            line-height: 1.5;
+            padding: var(--space-16);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: var(--space-24);
+            padding: var(--space-24);
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-card-border);
+        }
+
+        h1 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--space-8);
+            color: var(--color-text);
+        }
+
+        .subtitle {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-base);
+        }
+
+        .controls {
+            display: flex;
+            gap: var(--space-12);
+            margin-bottom: var(--space-24);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: var(--space-8);
+            align-items: center;
+        }
+
+        label {
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-base);
+        }
+
+        select, button {
+            padding: var(--space-8) var(--space-12);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border);
+            font-size: var(--font-size-base);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select {
+            background: var(--color-surface);
+            color: var(--color-text);
+        }
+
+        button {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: var(--color-primary-hover);
+        }
+
+        button:active {
+            background: var(--color-primary-active);
+        }
+
+        button.secondary {
+            background: var(--color-secondary);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        button.secondary:hover {
+            background: var(--color-secondary-hover);
+        }
+
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-24);
+            margin-bottom: var(--space-24);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .word-display {
+            text-align: center;
+        }
+
+        .word {
+            font-size: var(--font-size-3xl);
+            font-weight: 600;
+            margin-bottom: var(--space-16);
+            color: var(--color-text);
+        }
+
+        .phonetic {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-24);
+            font-family: 'Courier New', monospace;
+        }
+
+        .definition {
+            font-size: var(--font-size-lg);
+            line-height: 1.6;
+            color: var(--color-text);
+            text-align: left;
+            padding: var(--space-16);
+            background: var(--color-bg-1);
+            border-radius: var(--radius-base);
+            margin-top: var(--space-16);
+        }
+
+        .definition.hidden {
+            filter: blur(8px);
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: var(--space-12);
+            margin-top: var(--space-24);
+            justify-content: center;
+        }
+
+        .stats {
+            display: flex;
+            gap: var(--space-24);
+            justify-content: center;
+            padding: var(--space-16);
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-card-border);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: var(--font-size-2xl);
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .stat-label {
+            font-size: var(--font-size-base);
+            color: var(--color-text-secondary);
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: var(--space-8);
+        }
+
+        .level-a {
+            background: var(--color-bg-1);
+            color: var(--color-primary);
+        }
+
+        .level-b {
+            background: var(--color-bg-2);
+            color: #a84b2f;
+        }
+
+        .level-c {
+            background: var(--color-bg-3);
+            color: #15803d;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--color-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: var(--space-8);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-primary);
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>C2 Vocabulary Trainer</h1>
+            <p class="subtitle">Master advanced English vocabulary for medical AI conferences and sophisticated conversations</p>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="levelSelect">Level:</label>
+                <select id="levelSelect">
+                    <option value="all">All Levels</option>
+                    <option value="A">Level A - Advanced C1-C2</option>
+                    <option value="B">Level B - Congress Ready</option>
+                    <option value="C">Level C - Social & Dinner</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="modeSelect">Mode:</label>
+                <select id="modeSelect">
+                    <option value="flashcard">Flashcard</option>
+                    <option value="quiz">Quiz</option>
+                </select>
+            </div>
+
+            <button class="secondary" id="shuffleBtn">Shuffle</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="currentCard">0</div>
+                <div class="stat-label">Current</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalCards">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="masteredCards">0</div>
+                <div class="stat-label">Mastered</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="card">
+            <div class="word-display" id="wordDisplay">
+                <div class="level-badge" id="levelBadge">Level A</div>
+                <div class="word" id="wordText">Select a level to start</div>
+                <div class="phonetic" id="phoneticText"></div>
+                <div class="definition hidden" id="definitionText" onclick="toggleDefinition()">
+                    Click to reveal definition
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="prevBtn">Previous</button>
+            <button id="revealBtn">Reveal / Hide</button>
+            <button id="masteredBtn" class="secondary">Mark as Mastered</button>
+            <button id="nextBtn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const vocabulary = {
+            A: [
+                { word: "Candor", phonetic: "/ˈkændər/", definition: "искренность, прямота; откровенность в обсуждении сложных тем" },
+                { word: "Concur", phonetic: "/kənˈkɜːr/", definition: "соглашаться, разделять мнение; совпадать по выводам" },
+                { word: "Conjecture", phonetic: "/kənˈdʒektʃər/", definition: "предположение, догадка; недоказанная гипотеза" },
+                { word: "Convoluted", phonetic: "/ˈkɒnvəluːtɪd/", definition: "запутанный, сложный; чрезмерно усложнённый" },
+                { word: "Debilitate", phonetic: "/dɪˈbɪlɪteɪt/", definition: "ослаблять организм или систему; подрывать эффективность" },
+                { word: "Diligent", phonetic: "/ˈdɪlɪdʒənt/", definition: "прилежный; тщательно и настойчиво работающий" },
+                { word: "Equitable", phonetic: "/ˈekwɪtəbl/", definition: "справедливый, беспристрастный; основанный на принципах равенства" },
+                { word: "Ineffable", phonetic: "/ɪnˈefəbl/", definition: "невыразимый словами; слишком сильный или сложный для описания" },
+                { word: "Obfuscate", phonetic: "/ˈɑːbfʌskeɪt/", definition: "запутывать, делать менее понятным; намеренно затуманивать смысл" },
+                { word: "Ominous", phonetic: "/ˈɑːmɪnəs/", definition: "зловещий, тревожный; предвещающий неблагоприятный исход" },
+                { word: "Perfunctory", phonetic: "/pərˈfʌŋktəri/", definition: "поверхностный, формальный; сделанный «для галочки» без интереса" },
+                { word: "Redundant", phonetic: "/rɪˈdʌndənt/", definition: "избыточный; дублирующий и не добавляющий ценности" },
+                { word: "Rescind", phonetic: "/rɪˈsɪnd/", definition: "аннулировать решение/контракт; официально отменять документ" },
+                { word: "Tenacious", phonetic: "/təˈneɪʃəs/", definition: "цепкий, упорный; настойчиво держащийся цели или позиции" },
+                { word: "Vindicate", phonetic: "/ˈvɪndɪkeɪt/", definition: "оправдывать, подтверждать правоту; снимать обвинения фактами" },
+                { word: "Voracious", phonetic: "/vəˈreɪʃəs/", definition: "жадный до знаний/чтения; прожорливый (в прямом смысле)" }
+            ],
+            B: [
+                { word: "Aberrant", phonetic: "/ˈæbərənt/", definition: "отклоняющийся от нормы; атипичный (о клетке, поведении)" },
+                { word: "Accountability", phonetic: "/əˌkaʊntəˈbɪləti/", definition: "подотчётность; ответственность за результаты и решения" },
+                { word: "Acuity", phonetic: "/əˈkjuːəti/", definition: "острота (зрения, ума); проницательность" },
+                { word: "Ameliorate", phonetic: "/əˈmiːliəreɪt/", definition: "улучшать, смягчать (состояние, ситуацию)" },
+                { word: "Articulate", phonetic: "/ɑːrˈtɪkjəleɪt/", definition: "чётко формулировать мысли; ясно выражаться" },
+                { word: "Astute", phonetic: "/əˈstuːt/", definition: "проницательный; умеющий быстро оценивать ситуацию" },
+                { word: "Augment", phonetic: "/ɔːɡˈment/", definition: "дополнять, усиливать; расширять набор данных" },
+                { word: "Bolster", phonetic: "/ˈboʊlstər/", definition: "подкреплять (аргумент); усиливать позицию" },
+                { word: "Calibrate", phonetic: "/ˈkælɪbreɪt/", definition: "калибровать прибор/модель; настраивать точность" },
+                { word: "Circumspect", phonetic: "/ˈsɜːrkəmspekt/", definition: "осмотрительный; тщательно взвешивающий риски" },
+                { word: "Cogent", phonetic: "/ˈkoʊdʒənt/", definition: "убедительный, логичный; веский (аргумент)" },
+                { word: "Corroborate", phonetic: "/kəˈrɑːbəreɪt/", definition: "подтверждать независимыми данными; подкреплять доказательствами" },
+                { word: "Delineate", phonetic: "/dɪˈlɪnieɪt/", definition: "очерчивать границы; детально описывать" },
+                { word: "Discern", phonetic: "/dɪˈsɜːrn/", definition: "различать; распознавать тонкие отличия" },
+                { word: "Efficacious", phonetic: "/ˌefɪˈkeɪʃəs/", definition: "действенный; дающий желаемый клинический эффект" },
+                { word: "Elicit", phonetic: "/ɪˈlɪsɪt/", definition: "вызывать реакцию; извлекать информацию" },
+                { word: "Elucidate", phonetic: "/ɪˈluːsɪdeɪt/", definition: "прояснять; делать понятным сложный вопрос" },
+                { word: "Empirical", phonetic: "/ɪmˈpɪrɪkl/", definition: "эмпирический; основанный на наблюдениях и экспериментах" },
+                { word: "Exemplify", phonetic: "/ɪɡˈzemplɪfaɪ/", definition: "служить примером; наглядно иллюстрировать" },
+                { word: "Extrapolate", phonetic: "/ɪkˈstræpəleɪt/", definition: "экстраполировать; распространять выводы за пределы данных" },
+                { word: "Granular", phonetic: "/ˈɡrænjələr/", definition: "детализированный; с высокой степенью разрешения данных" },
+                { word: "Hypothesize", phonetic: "/haɪˈpɑːθəsaɪz/", definition: "выдвигать гипотезу; предполагать для проверки" },
+                { word: "Immutable", phonetic: "/ɪˈmjuːtəbl/", definition: "неизменный; не поддающийся изменению" },
+                { word: "Incisive", phonetic: "/ɪnˈsaɪsɪv/", definition: "острый, проницательный; точно схватывающий суть" },
+                { word: "Inference", phonetic: "/ˈɪnfərəns/", definition: "умозаключение; вывод модели (model inference)" },
+                { word: "Innate", phonetic: "/ɪˈneɪt/", definition: "врождённый; присущий изначально" },
+                { word: "Intractable", phonetic: "/ɪnˈtræktəbl/", definition: "неподдающийся решению; упорно не поддающийся лечению" },
+                { word: "Intricate", phonetic: "/ˈɪntrɪkət/", definition: "сложный, запутанный; с множеством взаимосвязанных деталей" },
+                { word: "Judiciously", phonetic: "/dʒuːˈdɪʃəsli/", definition: "благоразумно; с должной осмотрительностью" },
+                { word: "Lucid", phonetic: "/ˈluːsɪd/", definition: "ясный, понятный; чётко изложенный" },
+                { word: "Nuanced", phonetic: "/ˈnuːɑːnst/", definition: "нюансированный; учитывающий тонкие различия" },
+                { word: "Paradigm", phonetic: "/ˈpærədaɪm/", definition: "парадигма; модель мышления или образец подхода" },
+                { word: "Plausible", phonetic: "/ˈplɔːzəbl/", definition: "правдоподобный; вероятный, но не доказанный" },
+                { word: "Pragmatic", phonetic: "/præɡˈmætɪk/", definition: "прагматичный; ориентированный на практический результат" },
+                { word: "Preclude", phonetic: "/prɪˈkluːd/", definition: "исключать возможность; делать невозможным" },
+                { word: "Profound", phonetic: "/prəˈfaʊnd/", definition: "глубокий (о знаниях, изменениях); фундаментальный" },
+                { word: "Rationale", phonetic: "/ˌræʃəˈnæl/", definition: "обоснование; логическое объяснение выбора" },
+                { word: "Replicate", phonetic: "/ˈreplɪkeɪt/", definition: "воспроизводить; повторять эксперимент для проверки" },
+                { word: "Robust", phonetic: "/roʊˈbʌst/", definition: "робастный, устойчивый; надёжный при вариациях данных" },
+                { word: "Salient", phonetic: "/ˈseɪliənt/", definition: "ключевой, выдающийся; наиболее заметный" },
+                { word: "Scrutinize", phonetic: "/ˈskruːtənaɪz/", definition: "тщательно изучать; анализировать в деталях" },
+                { word: "Stringent", phonetic: "/ˈstrɪndʒənt/", definition: "строгий; жёсткий (о требованиях, критериях)" },
+                { word: "Substantiate", phonetic: "/səbˈstænʃieɪt/", definition: "обосновывать; подкреплять доказательствами" },
+                { word: "Tangible", phonetic: "/ˈtændʒəbl/", definition: "осязаемый; конкретный и измеримый" },
+                { word: "Trajectory", phonetic: "/trəˈdʒektəri/", definition: "траектория; динамика изменения во времени" },
+                { word: "Ubiquitous", phonetic: "/juːˈbɪkwɪtəs/", definition: "вездесущий; встречающийся повсюду" },
+                { word: "Unprecedented", phonetic: "/ʌnˈpresɪdentɪd/", definition: "беспрецедентный; не имеющий аналогов ранее" },
+                { word: "Validate", phonetic: "/ˈvælɪdeɪt/", definition: "валидировать; подтверждать корректность модели/метода" }
+            ],
+            C: [
+                { word: "Allude", phonetic: "/əˈluːd/", definition: "намекать, ссылаться косвенно; упоминать без прямого называния" },
+                { word: "Amplify", phonetic: "/ˈæmplɪfaɪ/", definition: "усиливать (голос, влияние); распространять идею" },
+                { word: "Convey", phonetic: "/kənˈveɪ/", definition: "передавать (смысл, эмоцию); доносить идею" },
+                { word: "Cultivate", phonetic: "/ˈkʌltɪveɪt/", definition: "развивать, взращивать (отношения, навыки, вкус)" },
+                { word: "Curate", phonetic: "/kjʊˈreɪt/", definition: "тщательно отбирать; курировать контент/опыт" },
+                { word: "Embody", phonetic: "/ɪmˈbɑːdi/", definition: "воплощать; олицетворять собой" },
+                { word: "Evoke", phonetic: "/ɪˈvoʊk/", definition: "вызывать (эмоции, воспоминания); пробуждать" },
+                { word: "Gravitate", phonetic: "/ˈɡrævɪteɪt/", definition: "тяготеть к чему-то; естественно склоняться" },
+                { word: "Leverage", phonetic: "/ˈlevərɪdʒ/", definition: "использовать с максимальной отдачей; задействовать ресурс" },
+                { word: "Navigate", phonetic: "/ˈnævɪɡeɪt/", definition: "ориентироваться в ситуации; «навигировать» сложности" },
+                { word: "Pivot", phonetic: "/ˈpɪvət/", definition: "менять направление; делать разворот в стратегии" },
+                { word: "Resonate", phonetic: "/ˈrezəneɪt/", definition: "находить отклик; «резонировать» с аудиторией/идеей" },
+                { word: "Authentic", phonetic: "/ɔːˈθentɪk/", definition: "подлинный, аутентичный; настоящий, не поддельный" },
+                { word: "Bespoke", phonetic: "/bɪˈspoʊk/", definition: "сделанный на заказ; индивидуально подобранный" },
+                { word: "Compelling", phonetic: "/kəmˈpelɪŋ/", definition: "убедительный, захватывающий; невозможно игнорировать" },
+                { word: "Eclectic", phonetic: "/ɪˈklektɪk/", definition: "эклектичный; сочетающий разные стили/источники" },
+                { word: "Elevated", phonetic: "/ˈelɪveɪtɪd/", definition: "приподнятый; более изысканная версия чего-то обычного" },
+                { word: "Holistic", phonetic: "/hoʊˈlɪstɪk/", definition: "целостный; охватывающий все аспекты" },
+                { word: "Immersive", phonetic: "/ɪˈmɜːrsɪv/", definition: "погружающий; создающий эффект присутствия" },
+                { word: "Intentional", phonetic: "/ɪnˈtenʃənl/", definition: "осознанный, намеренный; сделанный с умыслом" },
+                { word: "Pivotal", phonetic: "/ˈpɪvətl/", definition: "ключевой, поворотный; решающий для исхода" },
+                { word: "Quintessential", phonetic: "/ˌkwɪntɪˈsenʃl/", definition: "типичнейший; воплощающий суть явления" },
+                { word: "Seamless", phonetic: "/ˈsiːmləs/", definition: "бесшовный; плавный, без видимых стыков" },
+                { word: "Visceral", phonetic: "/ˈvɪsərəl/", definition: "нутряной, инстинктивный; вызывающий физическую реакцию" },
+                { word: "Aesthetic", phonetic: "/esˈθetɪk/", definition: "эстетика; визуальный стиль и подход" },
+                { word: "Bandwidth", phonetic: "/ˈbændwɪdθ/", definition: "«пропускная способность»; ресурс внимания/времени" },
+                { word: "Ethos", phonetic: "/ˈiːθɑːs/", definition: "этос, дух; характерный настрой сообщества" },
+                { word: "Narrative", phonetic: "/ˈnærətɪv/", definition: "нарратив; история, которую мы рассказываем" },
+                { word: "Synergy", phonetic: "/ˈsɪnərdʒi/", definition: "синергия; совместный эффект больше суммы частей" },
+                { word: "Zeitgeist", phonetic: "/ˈtsaɪtɡaɪst/", definition: "дух времени; настроение эпохи" }
+            ]
+        };
+
+        let currentDeck = [];
+        let currentIndex = 0;
+        let masteredWords = new Set();
+        let isRevealed = false;
+
+        const levelSelect = document.getElementById('levelSelect');
+        const modeSelect = document.getElementById('modeSelect');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const revealBtn = document.getElementById('revealBtn');
+        const masteredBtn = document.getElementById('masteredBtn');
+        const wordText = document.getElementById('wordText');
+        const phoneticText = document.getElementById('phoneticText');
+        const definitionText = document.getElementById('definitionText');
+        const levelBadge = document.getElementById('levelBadge');
+        const currentCard = document.getElementById('currentCard');
+        const totalCards = document.getElementById('totalCards');
+        const masteredCards = document.getElementById('masteredCards');
+        const progressFill = document.getElementById('progressFill');
+
+        function loadDeck() {
+            const selectedLevel = levelSelect.value;
+            currentDeck = [];
+            
+            if (selectedLevel === 'all') {
+                currentDeck = [...vocabulary.A, ...vocabulary.B, ...vocabulary.C];
+            } else {
+                currentDeck = [...vocabulary[selectedLevel]];
+            }
+            
+            currentIndex = 0;
+            updateDisplay();
+            updateStats();
+        }
+
+        function shuffle() {
+            for (let i = currentDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
+            }
+            currentIndex = 0;
+            updateDisplay();
+            updateStats();
+        }
+
+        function updateDisplay() {
+            if (currentDeck.length === 0) {
+                wordText.textContent = 'Select a level to start';
+                phoneticText.textContent = '';
+                definitionText.textContent = '';
+                definitionText.classList.add('hidden');
+                levelBadge.textContent = '';
+                isRevealed = false;
+                return;
+            }
+
+            const word = currentDeck[currentIndex];
+            wordText.textContent = word.word;
+            phoneticText.textContent = word.phonetic;
+            definitionText.textContent = word.definition;
+            definitionText.classList.add('hidden');
+            isRevealed = false;
+
+            // Determine level badge
+            let level = 'A';
+            if (vocabulary.B.some(w => w.word === word.word)) level = 'B';
+            if (vocabulary.C.some(w => w.word === word.word)) level = 'C';
+            
+            levelBadge.textContent = `Level ${level}`;
+            levelBadge.className = 'level-badge level-' + level.toLowerCase();
+
+            // Update mastered button
+            if (masteredWords.has(word.word)) {
+                masteredBtn.textContent = 'Unmark Mastered';
+                masteredBtn.style.background = 'var(--color-success)';
+                masteredBtn.style.color = 'white';
+            } else {
+                masteredBtn.textContent = 'Mark as Mastered';
+                masteredBtn.style.background = '';
+                masteredBtn.style.color = '';
+            }
+        }
+
+        function toggleDefinition() {
+            isRevealed = !isRevealed;
+            if (isRevealed) {
+                definitionText.classList.remove('hidden');
+            } else {
+                definitionText.classList.add('hidden');
+            }
+        }
+
+        function nextCard() {
+            if (currentDeck.length === 0) return;
+            currentIndex = (currentIndex + 1) % currentDeck.length;
+            updateDisplay();
+            updateStats();
+        }
+
+        function prevCard() {
+            if (currentDeck.length === 0) return;
+            currentIndex = (currentIndex - 1 + currentDeck.length) % currentDeck.length;
+            updateDisplay();
+            updateStats();
+        }
+
+        function toggleMastered() {
+            if (currentDeck.length === 0) return;
+            const word = currentDeck[currentIndex].word;
+            
+            if (masteredWords.has(word)) {
+                masteredWords.delete(word);
+            } else {
+                masteredWords.add(word);
+            }
+            
+            updateDisplay();
+            updateStats();
+        }
+
+        function updateStats() {
+            currentCard.textContent = currentDeck.length > 0 ? currentIndex + 1 : 0;
+            totalCards.textContent = currentDeck.length;
+            masteredCards.textContent = masteredWords.size;
+            
+            const progress = currentDeck.length > 0 ? ((currentIndex + 1) / currentDeck.length) * 100 : 0;
+            progressFill.style.width = progress + '%';
+        }
+
+        // Event listeners
+        levelSelect.addEventListener('change', loadDeck);
+        shuffleBtn.addEventListener('click', shuffle);
+        prevBtn.addEventListener('click', prevCard);
+        nextBtn.addEventListener('click', nextCard);
+        revealBtn.addEventListener('click', toggleDefinition);
+        masteredBtn.addEventListener('click', toggleMastered);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === ' ') {
+                e.preventDefault();
+                toggleDefinition();
+            }
+            if (e.key === 'm' || e.key === 'M') toggleMastered();
+        });
+
+        // Initialize
+        loadDeck();
+    </script>
+</body>
+</html>
+
