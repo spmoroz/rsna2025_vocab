@@ -1,617 +1,580 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C2 Vocabulary Trainer</title>
-    <style>
-        :root {
-            --color-background: #fcfcf9;
-            --color-surface: #fffffd;
-            --color-text: #13343b;
-            --color-text-secondary: #626c71;
-            --color-primary: #21808d;
-            --color-primary-hover: #1d7480;
-            --color-primary-active: #1a6873;
-            --color-secondary: rgba(94, 82, 64, 0.12);
-            --color-secondary-hover: rgba(94, 82, 64, 0.2);
-            --color-border: rgba(94, 82, 64, 0.2);
-            --color-card-border: rgba(94, 82, 64, 0.12);
-            --color-success: #21808d;
-            --color-error: #c0152f;
-            --color-bg-1: rgba(59, 130, 246, 0.08);
-            --color-bg-2: rgba(245, 158, 11, 0.08);
-            --color-bg-3: rgba(34, 197, 94, 0.08);
-            --radius-base: 8px;
-            --radius-lg: 12px;
-            --space-8: 8px;
-            --space-12: 12px;
-            --space-16: 16px;
-            --space-24: 24px;
-            --font-size-base: 14px;
-            --font-size-lg: 16px;
-            --font-size-xl: 18px;
-            --font-size-2xl: 20px;
-            --font-size-3xl: 24px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --color-background: #1f2121;
-                --color-surface: #262828;
-                --color-text: #f5f5f5;
-                --color-text-secondary: rgba(167, 169, 169, 0.7);
-                --color-primary: #32b8c6;
-                --color-primary-hover: #2da6b2;
-                --color-primary-active: #2996a1;
-                --color-secondary: rgba(119, 124, 124, 0.15);
-                --color-secondary-hover: rgba(119, 124, 124, 0.25);
-                --color-border: rgba(119, 124, 124, 0.3);
-                --color-card-border: rgba(119, 124, 124, 0.2);
-                --color-bg-1: rgba(29, 78, 216, 0.15);
-                --color-bg-2: rgba(180, 83, 9, 0.15);
-                --color-bg-3: rgba(21, 128, 61, 0.15);
-            }
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--color-background);
-            color: var(--color-text);
-            font-size: var(--font-size-base);
-            line-height: 1.5;
-            padding: var(--space-16);
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: var(--space-24);
-            padding: var(--space-24);
-            background: var(--color-surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--color-card-border);
-        }
-
-        h1 {
-            font-size: var(--font-size-3xl);
-            margin-bottom: var(--space-8);
-            color: var(--color-text);
-        }
-
-        .subtitle {
-            color: var(--color-text-secondary);
-            font-size: var(--font-size-base);
-        }
-
-        .controls {
-            display: flex;
-            gap: var(--space-12);
-            margin-bottom: var(--space-24);
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .control-group {
-            display: flex;
-            gap: var(--space-8);
-            align-items: center;
-        }
-
-        label {
-            font-weight: 500;
-            color: var(--color-text-secondary);
-            font-size: var(--font-size-base);
-        }
-
-        select, button {
-            padding: var(--space-8) var(--space-12);
-            border-radius: var(--radius-base);
-            border: 1px solid var(--color-border);
-            font-size: var(--font-size-base);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        select {
-            background: var(--color-surface);
-            color: var(--color-text);
-        }
-
-        button {
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            font-weight: 500;
-        }
-
-        button:hover {
-            background: var(--color-primary-hover);
-        }
-
-        button:active {
-            background: var(--color-primary-active);
-        }
-
-        button.secondary {
-            background: var(--color-secondary);
-            color: var(--color-text);
-            border: 1px solid var(--color-border);
-        }
-
-        button.secondary:hover {
-            background: var(--color-secondary-hover);
-        }
-
-        .card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-card-border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-24);
-            margin-bottom: var(--space-24);
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .word-display {
-            text-align: center;
-        }
-
-        .word {
-            font-size: var(--font-size-3xl);
-            font-weight: 600;
-            margin-bottom: var(--space-16);
-            color: var(--color-text);
-        }
-
-        .phonetic {
-            font-size: var(--font-size-lg);
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-24);
-            font-family: 'Courier New', monospace;
-        }
-
-        .definition {
-            font-size: var(--font-size-lg);
-            line-height: 1.6;
-            color: var(--color-text);
-            text-align: left;
-            padding: var(--space-16);
-            background: var(--color-bg-1);
-            border-radius: var(--radius-base);
-            margin-top: var(--space-16);
-        }
-
-        .definition.hidden {
-            filter: blur(8px);
-            user-select: none;
-            cursor: pointer;
-        }
-
-        .button-group {
-            display: flex;
-            gap: var(--space-12);
-            margin-top: var(--space-24);
-            justify-content: center;
-        }
-
-        .stats {
-            display: flex;
-            gap: var(--space-24);
-            justify-content: center;
-            padding: var(--space-16);
-            background: var(--color-surface);
-            border-radius: var(--radius-base);
-            border: 1px solid var(--color-card-border);
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: var(--font-size-2xl);
-            font-weight: 600;
-            color: var(--color-primary);
-        }
-
-        .stat-label {
-            font-size: var(--font-size-base);
-            color: var(--color-text-secondary);
-        }
-
-        .level-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: var(--space-8);
-        }
-
-        .level-a {
-            background: var(--color-bg-1);
-            color: var(--color-primary);
-        }
-
-        .level-b {
-            background: var(--color-bg-2);
-            color: #a84b2f;
-        }
-
-        .level-c {
-            background: var(--color-bg-3);
-            color: #15803d;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--color-secondary);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: var(--space-8);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--color-primary);
-            transition: width 0.3s;
-        }
-
-        @media (max-width: 600px) {
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .control-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-        }
-    </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.2">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>C2 Vocabulary Trainer</h1>
-            <p class="subtitle">Master advanced English vocabulary for medical AI conferences and sophisticated conversations</p>
-        </header>
-
-        <div class="controls">
-            <div class="control-group">
-                <label for="levelSelect">Level:</label>
-                <select id="levelSelect">
-                    <option value="all">All Levels</option>
-                    <option value="A">Level A - Advanced C1-C2</option>
-                    <option value="B">Level B - Congress Ready</option>
-                    <option value="C">Level C - Social & Dinner</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label for="modeSelect">Mode:</label>
-                <select id="modeSelect">
-                    <option value="flashcard">Flashcard</option>
-                    <option value="quiz">Quiz</option>
-                </select>
-            </div>
-
-            <button class="secondary" id="shuffleBtn">Shuffle</button>
-        </div>
-
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-value" id="currentCard">0</div>
-                <div class="stat-label">Current</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="totalCards">0</div>
-                <div class="stat-label">Total</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="masteredCards">0</div>
-                <div class="stat-label">Mastered</div>
-            </div>
-        </div>
-
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-
-        <div class="card">
-            <div class="word-display" id="wordDisplay">
-                <div class="level-badge" id="levelBadge">Level A</div>
-                <div class="word" id="wordText">Select a level to start</div>
-                <div class="phonetic" id="phoneticText"></div>
-                <div class="definition hidden" id="definitionText" onclick="toggleDefinition()">
-                    Click to reveal definition
-                </div>
-            </div>
-        </div>
-
-        <div class="button-group">
-            <button id="prevBtn">Previous</button>
-            <button id="revealBtn">Reveal / Hide</button>
-            <button id="masteredBtn" class="secondary">Mark as Mastered</button>
-            <button id="nextBtn">Next</button>
-        </div>
-    </div>
-
-    <script>
-        const vocabulary = {
-            A: [
-                { word: "Candor", phonetic: "/ˈkændər/", definition: "искренность, прямота; откровенность в обсуждении сложных тем" },
-                { word: "Concur", phonetic: "/kənˈkɜːr/", definition: "соглашаться, разделять мнение; совпадать по выводам" },
-                { word: "Conjecture", phonetic: "/kənˈdʒektʃər/", definition: "предположение, догадка; недоказанная гипотеза" },
-                { word: "Convoluted", phonetic: "/ˈkɒnvəluːtɪd/", definition: "запутанный, сложный; чрезмерно усложнённый" },
-                { word: "Debilitate", phonetic: "/dɪˈbɪlɪteɪt/", definition: "ослаблять организм или систему; подрывать эффективность" },
-                { word: "Diligent", phonetic: "/ˈdɪlɪdʒənt/", definition: "прилежный; тщательно и настойчиво работающий" },
-                { word: "Equitable", phonetic: "/ˈekwɪtəbl/", definition: "справедливый, беспристрастный; основанный на принципах равенства" },
-                { word: "Ineffable", phonetic: "/ɪnˈefəbl/", definition: "невыразимый словами; слишком сильный или сложный для описания" },
-                { word: "Obfuscate", phonetic: "/ˈɑːbfʌskeɪt/", definition: "запутывать, делать менее понятным; намеренно затуманивать смысл" },
-                { word: "Ominous", phonetic: "/ˈɑːmɪnəs/", definition: "зловещий, тревожный; предвещающий неблагоприятный исход" },
-                { word: "Perfunctory", phonetic: "/pərˈfʌŋktəri/", definition: "поверхностный, формальный; сделанный «для галочки» без интереса" },
-                { word: "Redundant", phonetic: "/rɪˈdʌndənt/", definition: "избыточный; дублирующий и не добавляющий ценности" },
-                { word: "Rescind", phonetic: "/rɪˈsɪnd/", definition: "аннулировать решение/контракт; официально отменять документ" },
-                { word: "Tenacious", phonetic: "/təˈneɪʃəs/", definition: "цепкий, упорный; настойчиво держащийся цели или позиции" },
-                { word: "Vindicate", phonetic: "/ˈvɪndɪkeɪt/", definition: "оправдывать, подтверждать правоту; снимать обвинения фактами" },
-                { word: "Voracious", phonetic: "/vəˈreɪʃəs/", definition: "жадный до знаний/чтения; прожорливый (в прямом смысле)" }
-            ],
-            B: [
-                { word: "Aberrant", phonetic: "/ˈæbərənt/", definition: "отклоняющийся от нормы; атипичный (о клетке, поведении)" },
-                { word: "Accountability", phonetic: "/əˌkaʊntəˈbɪləti/", definition: "подотчётность; ответственность за результаты и решения" },
-                { word: "Acuity", phonetic: "/əˈkjuːəti/", definition: "острота (зрения, ума); проницательность" },
-                { word: "Ameliorate", phonetic: "/əˈmiːliəreɪt/", definition: "улучшать, смягчать (состояние, ситуацию)" },
-                { word: "Articulate", phonetic: "/ɑːrˈtɪkjəleɪt/", definition: "чётко формулировать мысли; ясно выражаться" },
-                { word: "Astute", phonetic: "/əˈstuːt/", definition: "проницательный; умеющий быстро оценивать ситуацию" },
-                { word: "Augment", phonetic: "/ɔːɡˈment/", definition: "дополнять, усиливать; расширять набор данных" },
-                { word: "Bolster", phonetic: "/ˈboʊlstər/", definition: "подкреплять (аргумент); усиливать позицию" },
-                { word: "Calibrate", phonetic: "/ˈkælɪbreɪt/", definition: "калибровать прибор/модель; настраивать точность" },
-                { word: "Circumspect", phonetic: "/ˈsɜːrkəmspekt/", definition: "осмотрительный; тщательно взвешивающий риски" },
-                { word: "Cogent", phonetic: "/ˈkoʊdʒənt/", definition: "убедительный, логичный; веский (аргумент)" },
-                { word: "Corroborate", phonetic: "/kəˈrɑːbəreɪt/", definition: "подтверждать независимыми данными; подкреплять доказательствами" },
-                { word: "Delineate", phonetic: "/dɪˈlɪnieɪt/", definition: "очерчивать границы; детально описывать" },
-                { word: "Discern", phonetic: "/dɪˈsɜːrn/", definition: "различать; распознавать тонкие отличия" },
-                { word: "Efficacious", phonetic: "/ˌefɪˈkeɪʃəs/", definition: "действенный; дающий желаемый клинический эффект" },
-                { word: "Elicit", phonetic: "/ɪˈlɪsɪt/", definition: "вызывать реакцию; извлекать информацию" },
-                { word: "Elucidate", phonetic: "/ɪˈluːsɪdeɪt/", definition: "прояснять; делать понятным сложный вопрос" },
-                { word: "Empirical", phonetic: "/ɪmˈpɪrɪkl/", definition: "эмпирический; основанный на наблюдениях и экспериментах" },
-                { word: "Exemplify", phonetic: "/ɪɡˈzemplɪfaɪ/", definition: "служить примером; наглядно иллюстрировать" },
-                { word: "Extrapolate", phonetic: "/ɪkˈstræpəleɪt/", definition: "экстраполировать; распространять выводы за пределы данных" },
-                { word: "Granular", phonetic: "/ˈɡrænjələr/", definition: "детализированный; с высокой степенью разрешения данных" },
-                { word: "Hypothesize", phonetic: "/haɪˈpɑːθəsaɪz/", definition: "выдвигать гипотезу; предполагать для проверки" },
-                { word: "Immutable", phonetic: "/ɪˈmjuːtəbl/", definition: "неизменный; не поддающийся изменению" },
-                { word: "Incisive", phonetic: "/ɪnˈsaɪsɪv/", definition: "острый, проницательный; точно схватывающий суть" },
-                { word: "Inference", phonetic: "/ˈɪnfərəns/", definition: "умозаключение; вывод модели (model inference)" },
-                { word: "Innate", phonetic: "/ɪˈneɪt/", definition: "врождённый; присущий изначально" },
-                { word: "Intractable", phonetic: "/ɪnˈtræktəbl/", definition: "неподдающийся решению; упорно не поддающийся лечению" },
-                { word: "Intricate", phonetic: "/ˈɪntrɪkət/", definition: "сложный, запутанный; с множеством взаимосвязанных деталей" },
-                { word: "Judiciously", phonetic: "/dʒuːˈdɪʃəsli/", definition: "благоразумно; с должной осмотрительностью" },
-                { word: "Lucid", phonetic: "/ˈluːsɪd/", definition: "ясный, понятный; чётко изложенный" },
-                { word: "Nuanced", phonetic: "/ˈnuːɑːnst/", definition: "нюансированный; учитывающий тонкие различия" },
-                { word: "Paradigm", phonetic: "/ˈpærədaɪm/", definition: "парадигма; модель мышления или образец подхода" },
-                { word: "Plausible", phonetic: "/ˈplɔːzəbl/", definition: "правдоподобный; вероятный, но не доказанный" },
-                { word: "Pragmatic", phonetic: "/præɡˈmætɪk/", definition: "прагматичный; ориентированный на практический результат" },
-                { word: "Preclude", phonetic: "/prɪˈkluːd/", definition: "исключать возможность; делать невозможным" },
-                { word: "Profound", phonetic: "/prəˈfaʊnd/", definition: "глубокий (о знаниях, изменениях); фундаментальный" },
-                { word: "Rationale", phonetic: "/ˌræʃəˈnæl/", definition: "обоснование; логическое объяснение выбора" },
-                { word: "Replicate", phonetic: "/ˈreplɪkeɪt/", definition: "воспроизводить; повторять эксперимент для проверки" },
-                { word: "Robust", phonetic: "/roʊˈbʌst/", definition: "робастный, устойчивый; надёжный при вариациях данных" },
-                { word: "Salient", phonetic: "/ˈseɪliənt/", definition: "ключевой, выдающийся; наиболее заметный" },
-                { word: "Scrutinize", phonetic: "/ˈskruːtənaɪz/", definition: "тщательно изучать; анализировать в деталях" },
-                { word: "Stringent", phonetic: "/ˈstrɪndʒənt/", definition: "строгий; жёсткий (о требованиях, критериях)" },
-                { word: "Substantiate", phonetic: "/səbˈstænʃieɪt/", definition: "обосновывать; подкреплять доказательствами" },
-                { word: "Tangible", phonetic: "/ˈtændʒəbl/", definition: "осязаемый; конкретный и измеримый" },
-                { word: "Trajectory", phonetic: "/trəˈdʒektəri/", definition: "траектория; динамика изменения во времени" },
-                { word: "Ubiquitous", phonetic: "/juːˈbɪkwɪtəs/", definition: "вездесущий; встречающийся повсюду" },
-                { word: "Unprecedented", phonetic: "/ʌnˈpresɪdentɪd/", definition: "беспрецедентный; не имеющий аналогов ранее" },
-                { word: "Validate", phonetic: "/ˈvælɪdeɪt/", definition: "валидировать; подтверждать корректность модели/метода" }
-            ],
-            C: [
-                { word: "Allude", phonetic: "/əˈluːd/", definition: "намекать, ссылаться косвенно; упоминать без прямого называния" },
-                { word: "Amplify", phonetic: "/ˈæmplɪfaɪ/", definition: "усиливать (голос, влияние); распространять идею" },
-                { word: "Convey", phonetic: "/kənˈveɪ/", definition: "передавать (смысл, эмоцию); доносить идею" },
-                { word: "Cultivate", phonetic: "/ˈkʌltɪveɪt/", definition: "развивать, взращивать (отношения, навыки, вкус)" },
-                { word: "Curate", phonetic: "/kjʊˈreɪt/", definition: "тщательно отбирать; курировать контент/опыт" },
-                { word: "Embody", phonetic: "/ɪmˈbɑːdi/", definition: "воплощать; олицетворять собой" },
-                { word: "Evoke", phonetic: "/ɪˈvoʊk/", definition: "вызывать (эмоции, воспоминания); пробуждать" },
-                { word: "Gravitate", phonetic: "/ˈɡrævɪteɪt/", definition: "тяготеть к чему-то; естественно склоняться" },
-                { word: "Leverage", phonetic: "/ˈlevərɪdʒ/", definition: "использовать с максимальной отдачей; задействовать ресурс" },
-                { word: "Navigate", phonetic: "/ˈnævɪɡeɪt/", definition: "ориентироваться в ситуации; «навигировать» сложности" },
-                { word: "Pivot", phonetic: "/ˈpɪvət/", definition: "менять направление; делать разворот в стратегии" },
-                { word: "Resonate", phonetic: "/ˈrezəneɪt/", definition: "находить отклик; «резонировать» с аудиторией/идеей" },
-                { word: "Authentic", phonetic: "/ɔːˈθentɪk/", definition: "подлинный, аутентичный; настоящий, не поддельный" },
-                { word: "Bespoke", phonetic: "/bɪˈspoʊk/", definition: "сделанный на заказ; индивидуально подобранный" },
-                { word: "Compelling", phonetic: "/kəmˈpelɪŋ/", definition: "убедительный, захватывающий; невозможно игнорировать" },
-                { word: "Eclectic", phonetic: "/ɪˈklektɪk/", definition: "эклектичный; сочетающий разные стили/источники" },
-                { word: "Elevated", phonetic: "/ˈelɪveɪtɪd/", definition: "приподнятый; более изысканная версия чего-то обычного" },
-                { word: "Holistic", phonetic: "/hoʊˈlɪstɪk/", definition: "целостный; охватывающий все аспекты" },
-                { word: "Immersive", phonetic: "/ɪˈmɜːrsɪv/", definition: "погружающий; создающий эффект присутствия" },
-                { word: "Intentional", phonetic: "/ɪnˈtenʃənl/", definition: "осознанный, намеренный; сделанный с умыслом" },
-                { word: "Pivotal", phonetic: "/ˈpɪvətl/", definition: "ключевой, поворотный; решающий для исхода" },
-                { word: "Quintessential", phonetic: "/ˌkwɪntɪˈsenʃl/", definition: "типичнейший; воплощающий суть явления" },
-                { word: "Seamless", phonetic: "/ˈsiːmləs/", definition: "бесшовный; плавный, без видимых стыков" },
-                { word: "Visceral", phonetic: "/ˈvɪsərəl/", definition: "нутряной, инстинктивный; вызывающий физическую реакцию" },
-                { word: "Aesthetic", phonetic: "/esˈθetɪk/", definition: "эстетика; визуальный стиль и подход" },
-                { word: "Bandwidth", phonetic: "/ˈbændwɪdθ/", definition: "«пропускная способность»; ресурс внимания/времени" },
-                { word: "Ethos", phonetic: "/ˈiːθɑːs/", definition: "этос, дух; характерный настрой сообщества" },
-                { word: "Narrative", phonetic: "/ˈnærətɪv/", definition: "нарратив; история, которую мы рассказываем" },
-                { word: "Synergy", phonetic: "/ˈsɪnərdʒi/", definition: "синергия; совместный эффект больше суммы частей" },
-                { word: "Zeitgeist", phonetic: "/ˈtsaɪtɡaɪst/", definition: "дух времени; настроение эпохи" }
-            ]
-        };
-
-        let currentDeck = [];
-        let currentIndex = 0;
-        let masteredWords = new Set();
-        let isRevealed = false;
-
-        const levelSelect = document.getElementById('levelSelect');
-        const modeSelect = document.getElementById('modeSelect');
-        const shuffleBtn = document.getElementById('shuffleBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const revealBtn = document.getElementById('revealBtn');
-        const masteredBtn = document.getElementById('masteredBtn');
-        const wordText = document.getElementById('wordText');
-        const phoneticText = document.getElementById('phoneticText');
-        const definitionText = document.getElementById('definitionText');
-        const levelBadge = document.getElementById('levelBadge');
-        const currentCard = document.getElementById('currentCard');
-        const totalCards = document.getElementById('totalCards');
-        const masteredCards = document.getElementById('masteredCards');
-        const progressFill = document.getElementById('progressFill');
-
-        function loadDeck() {
-            const selectedLevel = levelSelect.value;
-            currentDeck = [];
-            
-            if (selectedLevel === 'all') {
-                currentDeck = [...vocabulary.A, ...vocabulary.B, ...vocabulary.C];
-            } else {
-                currentDeck = [...vocabulary[selectedLevel]];
-            }
-            
-            currentIndex = 0;
-            updateDisplay();
-            updateStats();
-        }
-
-        function shuffle() {
-            for (let i = currentDeck.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
-            }
-            currentIndex = 0;
-            updateDisplay();
-            updateStats();
-        }
-
-        function updateDisplay() {
-            if (currentDeck.length === 0) {
-                wordText.textContent = 'Select a level to start';
-                phoneticText.textContent = '';
-                definitionText.textContent = '';
-                definitionText.classList.add('hidden');
-                levelBadge.textContent = '';
-                isRevealed = false;
-                return;
-            }
-
-            const word = currentDeck[currentIndex];
-            wordText.textContent = word.word;
-            phoneticText.textContent = word.phonetic;
-            definitionText.textContent = word.definition;
-            definitionText.classList.add('hidden');
-            isRevealed = false;
-
-            // Determine level badge
-            let level = 'A';
-            if (vocabulary.B.some(w => w.word === word.word)) level = 'B';
-            if (vocabulary.C.some(w => w.word === word.word)) level = 'C';
-            
-            levelBadge.textContent = `Level ${level}`;
-            levelBadge.className = 'level-badge level-' + level.toLowerCase();
-
-            // Update mastered button
-            if (masteredWords.has(word.word)) {
-                masteredBtn.textContent = 'Unmark Mastered';
-                masteredBtn.style.background = 'var(--color-success)';
-                masteredBtn.style.color = 'white';
-            } else {
-                masteredBtn.textContent = 'Mark as Mastered';
-                masteredBtn.style.background = '';
-                masteredBtn.style.color = '';
-            }
-        }
-
-        function toggleDefinition() {
-            isRevealed = !isRevealed;
-            if (isRevealed) {
-                definitionText.classList.remove('hidden');
-            } else {
-                definitionText.classList.add('hidden');
-            }
-        }
-
-        function nextCard() {
-            if (currentDeck.length === 0) return;
-            currentIndex = (currentIndex + 1) % currentDeck.length;
-            updateDisplay();
-            updateStats();
-        }
-
-        function prevCard() {
-            if (currentDeck.length === 0) return;
-            currentIndex = (currentIndex - 1 + currentDeck.length) % currentDeck.length;
-            updateDisplay();
-            updateStats();
-        }
-
-        function toggleMastered() {
-            if (currentDeck.length === 0) return;
-            const word = currentDeck[currentIndex].word;
-            
-            if (masteredWords.has(word)) {
-                masteredWords.delete(word);
-            } else {
-                masteredWords.add(word);
-            }
-            
-            updateDisplay();
-            updateStats();
-        }
-
-        function updateStats() {
-            currentCard.textContent = currentDeck.length > 0 ? currentIndex + 1 : 0;
-            totalCards.textContent = currentDeck.length;
-            masteredCards.textContent = masteredWords.size;
-            
-            const progress = currentDeck.length > 0 ? ((currentIndex + 1) / currentDeck.length) * 100 : 0;
-            progressFill.style.width = progress + '%';
-        }
-
-        // Event listeners
-        levelSelect.addEventListener('change', loadDeck);
-        shuffleBtn.addEventListener('click', shuffle);
-        prevBtn.addEventListener('click', prevCard);
-        nextBtn.addEventListener('click', nextCard);
-        revealBtn.addEventListener('click', toggleDefinition);
-        masteredBtn.addEventListener('click', toggleMastered);
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') prevCard();
-            if (e.key === 'ArrowRight') nextCard();
-            if (e.key === ' ') {
-                e.preventDefault();
-                toggleDefinition();
-            }
-            if (e.key === 'm' || e.key === 'M') toggleMastered();
-        });
-
-        // Initialize
-        loadDeck();
-    </script>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;EuSoMII 2026 Sponsorship Opportunities&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tailwind.config = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>theme: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>extend: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>colors: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>eusomii: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>blue: '#0074AE',</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>navy: '#011835',</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>orange: '#D5600B',</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>light: '#F0F7FA'</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>fontFamily: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&amp;display=swap');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: 'Inter', sans-serif; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.clip-path-header {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Custom Scrollbar for Modals */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.custom-scroll::-webkit-scrollbar {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.custom-scroll::-webkit-scrollbar-track {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f1f1f1;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.custom-scroll::-webkit-scrollbar-thumb {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #888;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.custom-scroll::-webkit-scrollbar-thumb:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #555;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.loading-dots:after {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>content: ' .';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>animation: dots 1s steps(5, end) infinite;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@keyframes dots {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>40% { color: #fff; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>60% { text-shadow: .25em 0 0 #fff, .5em 0 0 rgba(0,0,0,0);}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>80%, 100% { text-shadow: .25em 0 0 #fff, .5em 0 0 #fff;}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-gray-50 text-gray-800 antialiased relative"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Hero Section --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;header class="relative bg-eusomii-navy text-white pt-20 pb-32 clip-path-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container mx-auto px-6 text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-eusomii-orange uppercase bg-white bg-opacity-10 rounded-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>Crete, Greece | October 2026</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>EuSoMII 2026 &lt;span class="text-eusomii-blue"&gt;Annual Meeting&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 font-light"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>Connect with the future of Medical Imaging Informatics.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex justify-center gap-4 flex-wrap"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="#packages" class="bg-eusomii-orange hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition duration-300 shadow-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>View Packages</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button onclick="openAdvisorModal()" class="bg-white text-eusomii-navy hover:bg-gray-100 font-bold py-3 px-8 rounded-lg transition duration-300 shadow-lg border border-transparent"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>✨ Find My Perfect Package</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Intro --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section class="py-16 bg-white"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container mx-auto px-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="max-w-4xl mx-auto text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl font-bold text-eusomii-navy mb-6"&gt;Why Partner with EuSoMII?&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-lg text-gray-600 mb-12 leading-relaxed"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>Join us in Crete for the premier European gathering of medical imaging informatics professionals.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>EuSoMII 2026 offers an intimate, high-impact environment to connect with 200–300 key decision-makers,<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>including radiologists, AI researchers, and healthcare IT directors.</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/p&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="grid md:grid-cols-3 gap-8 text-left"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="p-6 bg-eusomii-light rounded-xl border border-blue-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-eusomii-blue text-3xl mb-4"&gt;&lt;i class="fas fa-bullseye"&gt;&lt;/i&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="font-bold text-xl mb-2 text-eusomii-navy"&gt;Targeted Audience&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm text-gray-600"&gt;100% qualified leads: Radiologists, CIOs, and PACS Administrators—not generalists.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="p-6 bg-eusomii-light rounded-xl border border-blue-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-eusomii-blue text-3xl mb-4"&gt;&lt;i class="fas fa-globe-europe"&gt;&lt;/i&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="font-bold text-xl mb-2 text-eusomii-navy"&gt;European Leadership&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm text-gray-600"&gt;Access the minds shaping AI regulation and adoption across the EU.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="p-6 bg-eusomii-light rounded-xl border border-blue-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-eusomii-blue text-3xl mb-4"&gt;&lt;i class="fas fa-chart-line"&gt;&lt;/i&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="font-bold text-xl mb-2 text-eusomii-navy"&gt;Measurable ROI&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm text-gray-600"&gt;Detailed analytics and lead reports for top-tier sponsors.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Packages Section --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="packages" class="py-16 bg-gray-50 relative"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container mx-auto px-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center mb-12"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl font-bold text-eusomii-navy"&gt;Sponsorship Packages&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-gray-600 mt-2"&gt;Early Bird Incentive: &lt;strong&gt;10% Discount&lt;/strong&gt; if booked by March 31, 2026.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button onclick="openAdvisorModal()" class="mt-4 text-sm text-eusomii-blue hover:text-eusomii-navy font-semibold underline decoration-dotted underline-offset-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>✨ Not sure? Ask our AI Advisor</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-start"&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Silver --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 flex flex-col h-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="p-8 flex-grow"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-2xl font-bold text-gray-400 mb-2"&gt;SILVER&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-4xl font-bold text-eusomii-navy mb-6"&gt;€3,800&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;ul class="space-y-4 text-gray-600 mb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-microphone text-eusomii-orange mt-1 mr-3"&gt;&lt;/i&gt; 10 min Spotlight Talk&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-store text-eusomii-orange mt-1 mr-3"&gt;&lt;/i&gt; Compact Booth (6 m²)&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-ticket-alt text-eusomii-orange mt-1 mr-3"&gt;&lt;/i&gt; 4 Conference Passes&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-globe text-eusomii-orange mt-1 mr-3"&gt;&lt;/i&gt; 3-Month Website Listing&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-share-alt text-eusomii-orange mt-1 mr-3"&gt;&lt;/i&gt; 2 Social Posts&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="px-8 pb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="openEmailModal('Silver', 3800)" class="w-full py-2 text-sm text-gray-500 hover:text-eusomii-blue border border-gray-200 hover:border-eusomii-blue rounded transition-colors"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>✨ Generate Approval Email</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Gold (Featured) --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-white rounded-2xl shadow-xl transform scale-105 border-t-8 border-eusomii-orange relative z-10 flex flex-col h-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="absolute top-0 right-0 bg-eusomii-orange text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Best Value</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="p-8 flex-grow"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-2xl font-bold text-eusomii-orange mb-2"&gt;GOLD&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-4xl font-bold text-eusomii-navy mb-6"&gt;€5,500&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm text-gray-500 mb-6 italic"&gt;Optimal balance of thought leadership and brand presence.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;ul class="space-y-4 text-gray-700 mb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-microphone-alt text-eusomii-blue mt-1 mr-3"&gt;&lt;/i&gt; &lt;strong&gt;15 min Session Talk&lt;/strong&gt; + Panel&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-store text-eusomii-blue mt-1 mr-3"&gt;&lt;/i&gt; &lt;strong&gt;Standard Booth (8-9 m²)&lt;/strong&gt;&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-ticket-alt text-eusomii-blue mt-1 mr-3"&gt;&lt;/i&gt; 6 Passes (5 Full, 1 Exhibit)&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-globe text-eusomii-blue mt-1 mr-3"&gt;&lt;/i&gt; 6-Month Website Listing&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-coffee text-eusomii-blue mt-1 mr-3"&gt;&lt;/i&gt; Coffee Break Sponsorship&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-chart-bar text-eusomii-blue mt-1 mr-3"&gt;&lt;/i&gt; Basic Analytics&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#contact" class="block w-full text-center bg-eusomii-blue hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-300 mb-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>Select Gold</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;div class="px-8 pb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="openEmailModal('Gold', 5500)" class="w-full py-2 text-sm text-gray-500 hover:text-eusomii-blue border border-gray-200 hover:border-eusomii-blue rounded transition-colors"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>✨ Generate Approval Email</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Platinum --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-eusomii-navy text-white rounded-2xl shadow-lg overflow-hidden border border-eusomii-navy flex flex-col h-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="p-8 flex-grow"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-2xl font-bold text-eusomii-blue mb-2"&gt;PLATINUM&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="text-4xl font-bold text-white mb-6"&gt;€7,500&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;ul class="space-y-4 text-gray-300 mb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-star text-yellow-400 mt-1 mr-3"&gt;&lt;/i&gt; &lt;strong&gt;20 min Keynote&lt;/strong&gt; + Moderator&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-store text-yellow-400 mt-1 mr-3"&gt;&lt;/i&gt; Large Booth (10-12 m²) Priority&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-ticket-alt text-yellow-400 mt-1 mr-3"&gt;&lt;/i&gt; 8 Passes (6 Full, 2 Exhibit)&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-globe text-yellow-400 mt-1 mr-3"&gt;&lt;/i&gt; Year-round Website Feature&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-utensils text-yellow-400 mt-1 mr-3"&gt;&lt;/i&gt; Board Dinner Invite&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-video text-yellow-400 mt-1 mr-3"&gt;&lt;/i&gt; Co-branded Webinar&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;i class="fas fa-chart-pie text-yellow-400 mt-1 mr-3"&gt;&lt;/i&gt; Full Analytics Report&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="px-8 pb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>&lt;button onclick="openEmailModal('Platinum', 7500)" class="w-full py-2 text-sm text-gray-400 hover:text-white border border-gray-600 hover:border-white rounded transition-colors"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>✨ Generate Approval Email</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Startup &amp; Bundles Grid --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section class="py-16 bg-white"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container mx-auto px-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid lg:grid-cols-2 gap-12"&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Startup Discount --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="bg-green-50 rounded-2xl p-8 border border-green-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-center gap-4 mb-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-green-100 p-3 rounded-full text-green-600"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;i class="fas fa-rocket text-2xl"&gt;&lt;/i&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h2 class="text-2xl font-bold text-eusomii-navy"&gt;Startup Innovation Discount&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="mb-6 text-gray-700"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Qualifying startups receive a &lt;strong&gt;30% discount&lt;/strong&gt; on any package.</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="grid grid-cols-3 gap-4 mb-6 text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-white p-3 rounded-lg shadow-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-xs text-gray-500"&gt;Platinum&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold text-green-700"&gt;€5,250&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-white p-3 rounded-lg shadow-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-xs text-gray-500"&gt;Gold&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold text-green-700"&gt;€3,850&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="bg-white p-3 rounded-lg shadow-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="text-xs text-gray-500"&gt;Silver&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="font-bold text-green-700"&gt;€2,660&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-sm text-gray-600 bg-white p-4 rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;strong&gt;Eligibility:&lt;/strong&gt; &lt; 5 years old, &lt; €1M Revenue, &lt; 10 Employees, Proprietary Product.</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Add-Ons --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h2 class="text-2xl font-bold text-eusomii-navy mb-6"&gt;Add-Ons &amp; Bundles&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="overflow-x-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;table class="w-full text-left border-collapse"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="text-sm text-gray-500 border-b-2 border-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="py-3 font-semibold"&gt;Opportunity&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="py-3 font-semibold"&gt;Independent&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;th class="py-3 font-semibold text-eusomii-orange"&gt;Bundled (Save!)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;tbody class="text-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="border-b border-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 font-medium text-eusomii-navy"&gt;Lunch Sponsor&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 text-gray-500"&gt;€2,200&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 font-bold text-eusomii-orange"&gt;€1,100&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="border-b border-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 font-medium text-eusomii-navy"&gt;Coffee Break&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 text-gray-500"&gt;€1,100&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 font-bold text-eusomii-orange"&gt;€550&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;tr class="border-b border-gray-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 font-medium text-eusomii-navy"&gt;Thank-You Newsletter&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 text-gray-400 italic"&gt;N/A&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;td class="py-4 font-bold text-eusomii-orange"&gt;€550&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="mt-6 space-y-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h4 class="font-bold text-eusomii-navy text-sm uppercase tracking-wide"&gt;Premium Extras&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex flex-wrap gap-2 text-sm text-gray-600"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="bg-gray-100 px-3 py-1 rounded"&gt;Gala Dinner (€4.5k)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="bg-gray-100 px-3 py-1 rounded"&gt;Workshop (€4k)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="bg-gray-100 px-3 py-1 rounded"&gt;Webinar (€3.5k)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Footer / Contact --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;footer id="contact" class="bg-eusomii-navy text-white py-16"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container mx-auto px-6 text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-3xl font-bold mb-6"&gt;Reserve Your Spot&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p class="mb-8 text-gray-300"&gt;EuSoMII is a non-profit organization. All funds support educational initiatives.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="inline-block bg-white bg-opacity-5 rounded-lg p-8 border border-white border-opacity-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-xl font-semibold mb-2"&gt;Sponsorship Team&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="mailto:sponsorship@eusomii.org" class="text-eusomii-orange hover:text-white text-lg transition duration-300 block mb-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>sponsorship@eusomii.org</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;a href="http://www.eusomii.org" class="text-gray-400 hover:text-white transition duration-300"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>www.eusomii.org</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="mt-12 text-sm text-gray-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&amp;copy; 2026 EuSoMII. All rights reserved.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/footer&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- AI Advisor Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="advisorModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform transition-all scale-100 relative flex flex-col max-h-[90vh]"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-gradient-to-r from-eusomii-navy to-blue-900 p-6 rounded-t-2xl"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex justify-between items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-xl font-bold text-white flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fas fa-robot text-eusomii-orange"&gt;&lt;/i&gt; Smart Sponsorship Advisor</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="closeAdvisorModal()" class="text-white hover:text-gray-300 focus:outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fas fa-times text-xl"&gt;&lt;/i&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-blue-100 text-sm mt-1"&gt;Tell us about your goals, and we'll recommend the perfect package.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="p-6 overflow-y-auto custom-scroll flex-grow"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="advisorForm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="block text-gray-700 text-sm font-bold mb-2"&gt;Company Name &amp; Type&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="text" id="companyInput" placeholder="e.g. Acme AI, Series A Startup" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-eusomii-blue"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="block text-gray-700 text-sm font-bold mb-2"&gt;Primary Goal&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select id="goalInput" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-eusomii-blue"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Lead Generation (Scanning Badges)&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Brand Awareness &amp; Visibility&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Thought Leadership (Speaking)&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Networking with KOLs&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Recruiting Talent&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label class="block text-gray-700 text-sm font-bold mb-2"&gt;Budget Range&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;select id="budgetInput" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-eusomii-blue"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Flexible / Best Value&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Budget Conscious (&lt; €4k)&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;option&gt;Premium (&gt; €7k)&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="getRecommendation()" class="w-full bg-eusomii-orange hover:bg-orange-600 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-200 flex justify-center items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fas fa-magic"&gt;&lt;/i&gt; Get Recommendation</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="advisorLoading" class="hidden text-center py-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-eusomii-blue text-4xl mb-4"&gt;&lt;i class="fas fa-circle-notch fa-spin"&gt;&lt;/i&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-600 font-medium"&gt;Analyzing your profile&lt;span class="loading-dots"&gt;&lt;/span&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="advisorResult" class="hidden mt-4 bg-blue-50 p-4 rounded-lg border border-blue-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Content injected here --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Email Generator Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="emailModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl transform transition-all scale-100 relative flex flex-col max-h-[90vh]"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-gradient-to-r from-eusomii-blue to-cyan-600 p-6 rounded-t-2xl"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex justify-between items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 class="text-xl font-bold text-white flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fas fa-pen-fancy text-white"&gt;&lt;/i&gt; Approval Request Generator</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="closeEmailModal()" class="text-white hover:text-gray-200 focus:outline-none"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fas fa-times text-xl"&gt;&lt;/i&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-blue-100 text-sm mt-1"&gt;Generate a persuasive email to your manager to secure the budget.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="p-6 overflow-y-auto custom-scroll flex-grow"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="emailForm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="grid grid-cols-2 gap-4 mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label class="block text-gray-700 text-sm font-bold mb-2"&gt;Your Name&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="text" id="userName" placeholder="John Doe" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-eusomii-blue"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;label class="block text-gray-700 text-sm font-bold mb-2"&gt;Manager's Name&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;input type="text" id="managerName" placeholder="Jane Smith" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-eusomii-blue"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="hidden" id="selectedPackage"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="hidden" id="packagePrice"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-gray-100 p-3 rounded mb-4 text-sm text-gray-600 flex justify-between items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span&gt;Selected Package: &lt;strong id="displayPackageName" class="text-eusomii-navy"&gt;Gold&lt;/strong&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span id="displayPackagePrice" class="font-mono bg-white px-2 py-1 rounded border"&gt;€5,500&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="generateEmail()" class="w-full bg-eusomii-blue hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline transition duration-200 flex justify-center items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fas fa-paper-plane"&gt;&lt;/i&gt; Draft Email</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="emailLoading" class="hidden text-center py-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-eusomii-orange text-4xl mb-4"&gt;&lt;i class="fas fa-circle-notch fa-spin"&gt;&lt;/i&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-gray-600 font-medium"&gt;Writing your pitch&lt;span class="loading-dots"&gt;&lt;/span&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="emailResult" class="hidden mt-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label class="block text-gray-700 text-sm font-bold mb-2"&gt;Draft Email&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;textarea id="emailOutput" rows="10" class="w-full p-4 bg-gray-50 border rounded-lg text-sm font-mono text-gray-700 mb-4 focus:outline-none focus:ring-2 focus:ring-eusomii-blue" readonly&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="copyEmail()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition duration-200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;i class="fas fa-copy mr-2"&gt;&lt;/i&gt; Copy to Clipboard</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Logic --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const apiKey = ""; // System will inject key</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- UI Functions ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function openAdvisorModal() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('advisorModal').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('companyInput').focus();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function closeAdvisorModal() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('advisorModal').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('advisorResult').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('advisorForm').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function openEmailModal(pkgName, price) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('emailModal').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('selectedPackage').value = pkgName;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('packagePrice').value = price;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('displayPackageName').innerText = pkgName;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('displayPackagePrice').innerText = '€' + price.toLocaleString();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('userName').focus();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function closeEmailModal() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('emailModal').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('emailResult').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('emailForm').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function copyEmail() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const copyText = document.getElementById("emailOutput");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>copyText.select();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.execCommand("copy");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const btn = event.target.closest('button');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const originalText = btn.innerHTML;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.innerHTML = '&lt;i class="fas fa-check mr-2"&gt;&lt;/i&gt; Copied!';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; { btn.innerHTML = originalText; }, 2000);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- API Functions ---</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function callGemini(prompt) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>const payload = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>contents: [{ parts: [{ text: prompt }] }]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const response = await fetch(url, {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>method: 'POST',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>headers: { 'Content-Type': 'application/json' },</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>body: JSON.stringify(payload)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (!response.ok) throw new Error(`API Error: ${response.status}`);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const data = await response.json();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return data.candidates[0].content.parts[0].text;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error("Gemini API Error:", error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return "I apologize, but I am currently experiencing high traffic. Please try again in a moment.";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function getRecommendation() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const company = document.getElementById('companyInput').value || "A medical imaging company";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const goal = document.getElementById('goalInput').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const budget = document.getElementById('budgetInput').value;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('advisorForm').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('advisorLoading').classList.remove('hidden');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const prompt = `</p>
+<p class="p1"><span class="Apple-converted-space">            </span>You are an expert sales consultant for the EuSoMII 2026 Annual Meeting.<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>Analyze this potential sponsor:</p>
+<p class="p1"><span class="Apple-converted-space">            </span>- Company: ${company}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>- Goal: ${goal}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>- Budget Preference: ${budget}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>The Packages are:</p>
+<p class="p1"><span class="Apple-converted-space">            </span>1. Silver (€3,800): 10 min talk, small booth. Good for visibility on budget.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>2. Gold (€5,500): 15 min talk, standard booth, coffee break sponsor. Best Value.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>3. Platinum (€7,500): 20 min keynote, large booth, dinner invite. Premium.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>4. Startup Discount: 30% off any package if &lt; 5 years old &amp; &lt; €1M revenue.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>Task: Recommend the ONE best package for them.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Format:</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;strong&gt;Best Fit: [Package Name]&lt;/strong&gt;&lt;br&gt;&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>[2-3 sentences explaining exactly why this fits their goal and budget. Be persuasive but professional. Mention specific ROI benefits like "Speaking time" or "Booth size" relevant to their goal.]</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const result = await callGemini(prompt);</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const resultDiv = document.getElementById('advisorResult');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>resultDiv.innerHTML = result.replace(/\n/g, '&lt;br&gt;');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('advisorLoading').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>resultDiv.classList.remove('hidden');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Add a "Try Again" button</p>
+<p class="p1"><span class="Apple-converted-space">            </span>resultDiv.innerHTML += `&lt;div class="mt-4 pt-4 border-t border-blue-200 text-center"&gt;&lt;button onclick="document.getElementById('advisorResult').classList.add('hidden'); document.getElementById('advisorForm').classList.remove('hidden');" class="text-sm text-eusomii-blue underline"&gt;Start Over&lt;/button&gt;&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function generateEmail() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const user = document.getElementById('userName').value || "[My Name]";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const manager = document.getElementById('managerName').value || "[Manager Name]";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const pkg = document.getElementById('selectedPackage').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const price = document.getElementById('displayPackagePrice').innerText;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('emailForm').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('emailLoading').classList.remove('hidden');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const prompt = `</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Write a persuasive business email.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>From: ${user}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>To: Manager ${manager}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Topic: Requesting budget approval to sponsor EuSoMII 2026 (European Society of Medical Imaging Informatics).</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Package: ${pkg} (${price}).</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>Key Benefits of ${pkg} package to highlight:</p>
+<p class="p1"><span class="Apple-converted-space">            </span>- If Silver: Cost-effective visibility, speaking slot (10m).</p>
+<p class="p1"><span class="Apple-converted-space">            </span>- If Gold: Best value, significant speaking time (15m), coffee break branding.</p>
+<p class="p1"><span class="Apple-converted-space">            </span>- If Platinum: Keynote address, VIP networking, top-tier branding.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>Tone: Professional, ROI-focused, concise. Focus on how this helps the company's goals (hiring, sales, or brand).</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Output: Subject Line and Body only. No placeholders like [Date].</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const result = await callGemini(prompt);</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const outputBox = document.getElementById('emailOutput');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>outputBox.value = result;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('emailLoading').classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('emailResult').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">             </span>// Add a "Try Again" button</p>
+<p class="p1"><span class="Apple-converted-space">             </span>document.getElementById('emailResult').innerHTML += `&lt;div class="mt-2 text-center"&gt;&lt;button onclick="document.getElementById('emailResult').classList.add('hidden'); document.getElementById('emailForm').classList.remove('hidden');" class="text-sm text-gray-500 underline"&gt;Edit Details&lt;/button&gt;&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Close modals on escape key</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener('keydown', function(event) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (event.key === "Escape") {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>closeAdvisorModal();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>closeEmailModal();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
 </body>
 </html>
-
